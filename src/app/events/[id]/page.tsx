@@ -18,16 +18,24 @@ export default function EventDetailsPage({ params }: { params: Promise<{ id: str
   const [expandedTicket, setExpandedTicket] = useState<number | null>(null);
 
   useEffect(() => {
-    if (isConnected && signer) {
-      loadEventDetails();
-    }
+    loadEventDetails();
   }, [isConnected, signer, id]);
 
   const loadEventDetails = async () => {
-    if (!signer) return;
     setLoading(true);
     try {
-      const contract = new Contract(CONTRACT_ADDRESS, FairTicketArtifact.abi, signer);
+      const { Contract, JsonRpcProvider } = await import("ethers");
+      
+      // Use signer if connected, otherwise fallback to public RPC
+      let providerOrSigner;
+      if (signer) {
+        providerOrSigner = signer;
+      } else {
+        const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || "http://127.0.0.1:8545";
+        providerOrSigner = new JsonRpcProvider(rpcUrl);
+      }
+
+      const contract = new Contract(CONTRACT_ADDRESS, FairTicketArtifact.abi, providerOrSigner);
 
       // Load Event Info
       const evt = await contract.events(id);
@@ -72,7 +80,7 @@ export default function EventDetailsPage({ params }: { params: Promise<{ id: str
     } catch (e: any) {
       console.error("Failed to load details", e);
       if (e.code === "CALL_EXCEPTION") {
-        setEventData({ error: "Contract Mismatch. Did you redeploy? Please return to Dashboard." });
+        setEventData({ error: "Contract Mismatch or Network Issue. Please check connection." });
       }
     }
     setLoading(false);
@@ -84,26 +92,13 @@ export default function EventDetailsPage({ params }: { params: Promise<{ id: str
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (!isConnected) {
-    return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center">
-        <Shield className="w-16 h-16 text-gray-700 mb-6" />
-        <h1 className="text-2xl font-bold text-white mb-2">Private Audit Page</h1>
-        <p className="text-gray-500 mb-8 max-w-xs">Please link your organizer wallet to view the detailed audit logs for this event.</p>
-        <Link href="/connect" className="w-full max-w-sm py-4 bg-teal-500 text-black font-bold rounded-2xl">
-          Connect Now
-        </Link>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
-          <Link href="/dashboard" className="flex items-center gap-2 text-gray-400 hover:text-teal-400 transition-colors">
+          <Link href={isConnected ? "/dashboard" : "/"} className="flex items-center gap-2 text-gray-400 hover:text-teal-400 transition-colors">
             <ArrowLeft className="w-5 h-5" />
-            <span>Back to Dashboard</span>
+            <span>{isConnected ? "Back to Dashboard" : "Back to Home"}</span>
           </Link>
 
           <button
