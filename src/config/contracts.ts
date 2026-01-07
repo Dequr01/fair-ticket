@@ -14,8 +14,8 @@ export interface NetworkConfig {
 
 export const SUPPORTED_NETWORKS: Record<number, NetworkConfig> = {
   31337: {
-    name: "Hardhat Local",
-    rpcUrl: "http://192.168.100.144:8545",
+    name: "Hardhat Local (Tunnel)",
+    rpcUrl: process.env.NEXT_PUBLIC_RPC_URL || "http://127.0.0.1:8545",
     currency: { name: "ETH", symbol: "ETH", decimals: 18 }
   },
   137: {
