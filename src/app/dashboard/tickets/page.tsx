@@ -211,7 +211,7 @@ function TicketDesignerContent() {
     const loadingToast = toast.loading("Generating PDF Bundle...");
 
     try {
-      // Use A4 landscape dimensions (approx 297mm x 210mm)
+      // Use A4 landscape dimensions (297mm x 210mm)
       const pdf = new jsPDF({
         orientation: "landscape",
         unit: "mm",
@@ -219,24 +219,31 @@ function TicketDesignerContent() {
       });
 
       // Render the current ticket view to canvas
-      // Note: In a real batch scenario, we would iterate through all tickets and render them hidden.
-      // For this prototype, we'll render the *current preview* as a high-res asset.
-      
       const canvas = await html2canvas(ticketRef.current, {
         scale: 2, // 2x scale for crisp text
-        useCORS: true, // Allow loading cross-origin images if configured
-        backgroundColor: null
+        useCORS: true, 
+        allowTaint: true,
+        backgroundColor: null, // Transparent background
+        logging: false
       });
 
       const imgData = canvas.toDataURL("image/png");
       const pdfWidth = 297; 
       const pdfHeight = 210;
       
-      // Calculate aspect ratio to fit (Ticket is roughly 2:1)
-      // We'll place it centered
-      const imgProps = pdf.getImageProperties(imgData);
-      const imgWidth = 200; // 200mm wide
-      const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+      // Calculate dimensions to fit centered (Ticket is roughly 2:1)
+      const elementWidth = ticketRef.current.clientWidth;
+      const elementHeight = ticketRef.current.clientHeight;
+      const ratio = elementWidth / elementHeight;
+      
+      let imgWidth = 250; // Max width in mm
+      let imgHeight = imgWidth / ratio;
+      
+      // If height is too big, scale by height instead
+      if (imgHeight > 180) {
+         imgHeight = 180;
+         imgWidth = imgHeight * ratio;
+      }
       
       const x = (pdfWidth - imgWidth) / 2;
       const y = (pdfHeight - imgHeight) / 2;
@@ -246,9 +253,9 @@ function TicketDesignerContent() {
       
       pdf.save(`Ticket-${tickets[selectedTicketIndex].tokenId}.pdf`);
       toast.success("PDF Downloaded!");
-    } catch (e) {
-      console.error(e);
-      toast.error("Failed to generate PDF");
+    } catch (e: any) {
+      console.error("PDF Generation Error:", e);
+      toast.error(`Failed to generate PDF: ${e.message || "Unknown error"}`);
     } finally {
       toast.dismiss(loadingToast);
     }
