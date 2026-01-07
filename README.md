@@ -20,14 +20,40 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+## Frontend Testing
 
-To learn more about Next.js, take a look at the following resources:
+The project uses [Vitest](https://vitest.dev/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) for automated frontend testing.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Commands
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+*   **Run tests:** `npm run test:frontend`
+*   **Watch mode:** `npm run test:watch`
+*   **Coverage report:** `npm run test:coverage`
+
+### Testing Strategy
+
+1.  **Mocks:** Ethers.js and Smart Contract calls are mocked in `src/test/setup.ts` to allow testing without a local node.
+2.  **Wallet Simulation:** The `useWallet` hook and `window.ethereum` are mocked to simulate various connection states.
+3.  **Booth Operator Flow:** Tests verify that identity fields (Name, ID) appear only in Booth Mode and that the correct contract functions are called.
+4.  **Scanner Flow:** Tests simulate QR code scanning and verify the transition from IDLE to CHALLENGE states.
+
+Coverage reports are generated in the `coverage/` directory in HTML format.
+
+## Ticket Designer & Printing
+
+The application now includes a built-in **Ticket Designer** for organizers.
+
+### Features
+*   **Visual Editor:** Customize ticket appearance with background images, text colors, and layout presets (Modern, Classic, Minimal).
+*   **QR Generation:** Automatically generates secure QR codes containing the unique `tokenId` for each attendee.
+*   **Batch Printing:** Designed for standard paper printing. The UI automatically optimizes for print (hiding controls/navigation) when `Ctrl+P` or the "Print" button is used.
+*   **Dashboard Integration:** Access the designer directly from the Event Management card in the Dashboard.
+
+### Usage
+1.  Navigate to **Dashboard**.
+2.  Find your event and click **Design** (Blue button).
+3.  Use the left sidebar to upload a background image or toggle fields.
+4.  Click **Print Tickets** to generate a PDF or print directly.
 
 ## Deploy on Vercel
 

@@ -1,0 +1,24 @@
+type Event @entity {
+  id: ID!
+  organizer: Bytes!
+  name: String!
+  tickets: [Ticket!]! @derivedFrom(field: "event")
+  createdAt: BigInt!
+}
+
+type Ticket @entity {
+  id: ID!
+  event: Event!
+  owner: Bytes!
+  isScanned: Boolean!
+  scannedAt: BigInt
+  scannedBy: Bytes
+}
+
+type VerificationLog @entity(immutable: true) {
+  id: ID!
+  ticket: Ticket!
+  timestamp: BigInt!
+  success: Boolean!
+  reason: String
+}
