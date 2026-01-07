@@ -269,9 +269,12 @@ function TicketDesignerContent() {
   const TicketPreview = () => (
     <div 
       ref={ticketRef}
-      className={`relative w-full aspect-[2/1] rounded-3xl overflow-hidden shadow-2xl border border-gray-800 bg-black print:border-none print:shadow-none print:rounded-none`}
+      className={`relative w-full aspect-[2/1] rounded-3xl overflow-hidden shadow-2xl print:border-none print:shadow-none print:rounded-none`}
       style={{ 
-        backgroundColor: design.bgImage ? 'transparent' : '#111',
+        backgroundColor: design.bgImage ? 'transparent' : '#000000', // Explicit Hex
+        borderColor: '#1f2937', // border-gray-800
+        borderWidth: '1px',
+        borderStyle: 'solid'
       }}
     >
       {design.bgImage && (
@@ -309,15 +312,15 @@ function TicketDesignerContent() {
                 </div>
               )}
               {design.showId && currentTicket?.resolvedName && (
-                 <p className="text-xs font-bold badge inline-block px-2 py-0.5 rounded bg-white/10 backdrop-blur-md" style={{ color: design.textColor }}>
+                 <p className="text-xs font-bold badge inline-block px-2 py-0.5 rounded backdrop-blur-md" style={{ color: design.textColor, backgroundColor: 'rgba(255,255,255,0.1)' }}>
                    {currentTicket.resolvedName}
                  </p>
               )}
             </div>
           </div>
 
-          <div className="flex flex-col items-end justify-center pl-6 border-l border-white/10 border-dashed">
-            <div className="bg-white p-3 rounded-xl shadow-lg">
+          <div className="flex flex-col items-end justify-center pl-6 border-l border-dashed" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
+            <div className="p-3 rounded-xl shadow-lg" style={{ backgroundColor: '#ffffff' }}>
               <QRCodeSVG 
                 value={JSON.stringify({ tokenId: currentTicket?.tokenId || "0" })}
                 size={120}
@@ -339,7 +342,7 @@ function TicketDesignerContent() {
                   {currentEvent?.name}
                 </h2>
             )}
-            <div className="bg-white p-2 mb-4 border-2 border-black">
+            <div className="p-2 mb-4 border-2" style={{ backgroundColor: '#ffffff', borderColor: '#000000' }}>
                <QRCodeSVG value={JSON.stringify({ tokenId: currentTicket?.tokenId || "0" })} size={100} />
             </div>
             {design.showHolder && (
@@ -354,7 +357,7 @@ function TicketDesignerContent() {
             <div className="text-left">
                 {design.showEventName && <h2 className="text-4xl font-black tracking-tighter" style={{ color: design.textColor }}>{currentEvent?.name}</h2>}
             </div>
-            <div className="bg-white p-1">
+            <div className="p-1" style={{ backgroundColor: '#ffffff' }}>
                <QRCodeSVG value={JSON.stringify({ tokenId: currentTicket?.tokenId || "0" })} size={140} />
             </div>
         </div>
