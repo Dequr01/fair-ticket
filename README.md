@@ -1,62 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FairTicket 🎟️
+> **Ticketing. Trustless. Fraud-Proof.**
 
-## Getting Started
+FairTicket is a next-generation ticketing platform built on the **Polygon Blockchain**. It solves the ticketing industry's biggest problems—scalping, fraud, and lack of transparency—by using NFTs and cryptographic proofs.
 
-First, run the development server:
+![Tech Stack](https://img.shields.io/badge/Tech-Next.js_15-black) ![Tech Stack](https://img.shields.io/badge/Tech-Solidity-gray) ![Tech Stack](https://img.shields.io/badge/Tech-Hardhat-yellow) ![Tech Stack](https://img.shields.io/badge/Network-Polygon-purple)
 
+---
+
+## 📚 **University Presentation Guide**
+If you are a team member looking for the **Script**, **Talking Points**, or **Setup Instructions** for the final presentation, please read the dedicated guide:
+
+👉 **[Read the FairTicket Presentation Guide](./FairTicket_Presentation_Guide.md)** 👈
+
+*(Includes the "Hybrid Setup" instructions for connecting Vercel to Localhost)*
+
+---
+
+## 🚀 Quick Start (Local Development)
+
+If you just want to run the code on your machine:
+
+### 1. Install Dependencies
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Start the Local Blockchain
+Open a terminal and run:
+```bash
+npx hardhat node
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Deploy the Smart Contract
+Open a **second** terminal and run:
+```bash
+npx hardhat run scripts/deploy.js --network local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Start the Frontend
+Open a **third** terminal and run:
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Frontend Testing
+---
 
-The project uses [Vitest](https://vitest.dev/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) for automated frontend testing.
+## ✨ Key Features
 
-### Commands
+*   **Hybrid Booth Mode:** Assign tickets to users *without* crypto wallets using Identity Hashing (Name + Student ID).
+*   **Anti-Scalp Verification:** "Challenge-Response" QR codes prevent screenshots and replay attacks.
+*   **Ticket Studio:** Built-in designer to create custom, branded PDF tickets with blockchain verification codes.
+*   **Offline Queue:** The system continues to work (queuing assignments) even if internet connectivity is lost at the venue.
+*   **Public Audit:** A transparent, read-only view of the event registry for verifiability.
 
-*   **Run tests:** `npm run test:frontend`
-*   **Watch mode:** `npm run test:watch`
-*   **Coverage report:** `npm run test:coverage`
+---
 
-### Testing Strategy
+## 🛠️ Architecture
 
-1.  **Mocks:** Ethers.js and Smart Contract calls are mocked in `src/test/setup.ts` to allow testing without a local node.
-2.  **Wallet Simulation:** The `useWallet` hook and `window.ethereum` are mocked to simulate various connection states.
-3.  **Booth Operator Flow:** Tests verify that identity fields (Name, ID) appear only in Booth Mode and that the correct contract functions are called.
-4.  **Scanner Flow:** Tests simulate QR code scanning and verify the transition from IDLE to CHALLENGE states.
+*   **Frontend:** Next.js 15 (App Router), Tailwind CSS, Framer Motion / Anime.js.
+*   **Smart Contracts:** Solidity (OpenZeppelin ERC721), Hardhat.
+*   **Interaction:** Ethers.js v6.
+*   **Identity:** Keccak256 Hashing for privacy-preserving guest lists.
 
-Coverage reports are generated in the `coverage/` directory in HTML format.
+---
 
-## Ticket Designer & Printing
-
-The application now includes a built-in **Ticket Designer** for organizers.
-
-### Features
-*   **Visual Editor:** Customize ticket appearance with background images, text colors, and layout presets (Modern, Classic, Minimal).
-*   **QR Generation:** Automatically generates secure QR codes containing the unique `tokenId` for each attendee.
-*   **Batch Printing:** Designed for standard paper printing. The UI automatically optimizes for print (hiding controls/navigation) when `Ctrl+P` or the "Print" button is used.
-*   **Dashboard Integration:** Access the designer directly from the Event Management card in the Dashboard.
-
-### Usage
-1.  Navigate to **Dashboard**.
-2.  Find your event and click **Design** (Blue button).
-3.  Use the left sidebar to upload a background image or toggle fields.
-4.  Click **Print Tickets** to generate a PDF or print directly.
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 License
+MIT License. Free for educational and open-source use.
