@@ -97,19 +97,34 @@ export default function VerifyPage() {
     try {
       setStep("VERIFYING");
       const { Contract, keccak256, toUtf8Bytes } = await import("ethers");
-      const nameHash = keccak256(toUtf8Bytes(guestName));
-      const studentIdHash = keccak256(toUtf8Bytes(guestId));
+      const cleanName = guestName.trim();
+      const cleanId = guestId.trim();
+      
+      const nameHash = keccak256(toUtf8Bytes(cleanName));
+      const studentIdHash = keccak256(toUtf8Bytes(cleanId));
 
       const contract = new Contract(CONTRACT_ADDRESS, FairTicketArtifact.abi, signer);
-      setVerificationStatus("Checking Identity Hash...");
+      
+      // Pre-check: Verify hashes match BEFORE sending transaction
+      setVerificationStatus("Verifying Identity...");
+      const [ticketData] = await contract.getTicketDetails(ticketId);
+      
+      if (ticketData.holderNameHash !== nameHash || ticketData.holderStudentIdHash !== studentIdHash) {
+         playSound('error');
+         setVerificationStatus("Identity Mismatch: Name or ID is incorrect.");
+         setStep("ERROR");
+         return;
+      }
+
+      setVerificationStatus("Confirming Entry...");
       
       const tx = await contract.checkInGuest(ticketId, nameHash, studentIdHash);
-      setVerificationStatus("Confirming Entry...");
       await tx.wait();
       
       playSound('success');
       setStep("SUCCESS");
     } catch (e: any) {
+      console.error(e);
       const reason = e.reason || e.message || "Guest Verification Failed";
       playSound('error');
       setVerificationStatus(reason);

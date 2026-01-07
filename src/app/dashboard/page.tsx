@@ -202,8 +202,8 @@ export default function Dashboard() {
 
     try {
       const { keccak256, toUtf8Bytes } = await import('ethers');
-      const nameHash = keccak256(toUtf8Bytes(holderName));
-      const studentIdHash = keccak256(toUtf8Bytes(holderStudentId));
+      const nameHash = keccak256(toUtf8Bytes(holderName.trim()));
+      const studentIdHash = keccak256(toUtf8Bytes(holderStudentId.trim()));
 
       const contract = new Contract(CONTRACT_ADDRESS, FairTicketArtifact.abi, signer);
 
